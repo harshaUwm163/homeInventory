@@ -23,32 +23,27 @@ const App = () => {
   );
 
   const ListItem= ({item}) => {
-    return <View>
-    <View style={styles.listItem}>
+    return <View style={styles.listItem}>
+    <View style={{flexDirection: 'row', marginVertical:10}}>
       <View style={{flex: 1}}>
-        <Text style={{fontWeight: 'bold', fontSize: 15, color: COLORS.primary, textDecorationLine: item?.completed?'line-through': 'none'}}>
+        <Text style={{fontWeight: 'bold', fontSize: 20, color: COLORS.primary, }}>
           {item?.task}
         </Text>
       </View>
-      {
-        !item?.completed && (
-          <TouchableOpacity style={[styles.actionIcon]} onPress={() => markItenComplete(item?.id)}>
-            <Icon name="done" size={20} color={COLORS.white} />
-          </TouchableOpacity>
-        )
-      }
       <TouchableOpacity style={[styles.actionIcon, {backgroundColor: 'red'}]} onPress={() => deleteItem(item?.id)}>
         <Icon name="delete" size={20} color={COLORS.white} />
       </TouchableOpacity>
     </View>
-    <View style={[styles.slider]}>
-      <Text style={{fontSize:20, fontWeight:"bold"}}>{Math.floor(item?.quantity*100)} %</Text>
+    <View style={[styles.slider, {flexDirection: 'row'}]}>
+    <View style={{flex:1, justifyContent: 'center',}}> 
     <Slider
       value={item?.quantity}
       onSlidingComplete={value => {updateItemQuantity(item?.id,value); }}
       animateTransitions={true}
       animationType = {'spring'}
     />
+    </View>
+    <Text style={{fontSize:20, fontWeight:"bold", justifyContent: 'center', paddingHorizontal:10, paddingVertical:10}}>{Math.floor(item?.quantity*100)} %</Text>
     </View>
     </View>;
   };
@@ -85,22 +80,11 @@ const App = () => {
       const newItem ={
         id:Math.random(),
         task: textInput,
-        completed:false,
         quantity:0,
       };
       setItems([...items, newItem]);
       setTextInput('')
     }
-  };
-
-  const markItenComplete = itemId => {
-    const newItems = items.map((item)=>{
-      if(item.id == itemId){
-        return {...item, completed:true}
-      }
-      return item;
-    });
-    setItems(newItems);
   };
 
   const deleteItem = itemId => {
@@ -201,9 +185,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   listItem: {
-    padding: 20,
+    padding: 10,
+    paddingHorizontal: 20,
     backgroundColor: COLORS.white,
-    flexDirection: 'row',
     elevation: 20,
     borderRadius: 7,
     marginVertical: 10,
