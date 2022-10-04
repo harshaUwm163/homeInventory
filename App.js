@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Slider} from '@miblanchard/react-native-slider';
 
-const COLORS = {primary: '#1f145c', white: '#fff', blue: '0000ff'}
+const COLORS = {primary: '#1f145c', white: '#fff', blue: '#0000ff', green: '#00ff00', gray: '#808080'};
 
 const App = () => {
   const [sliderRange, setSliderRange] = React.useState(0);
@@ -23,6 +23,7 @@ const App = () => {
   );
 
   const ListItem= ({item}) => {
+    const [range, setRange] = React.useState(item?.quantity);
     return <View style={styles.listItem}>
     <View style={{flexDirection: 'row', marginVertical:10}}>
       <View style={{flex: 1}}>
@@ -30,20 +31,26 @@ const App = () => {
           {item?.task}
         </Text>
       </View>
+      <TouchableOpacity style={[styles.actionIcon, {backgroundColor: 'white'}]} onPress={() => enableEditItem(item?.id)}>
+        <Icon name="edit" size={25} color={item?.enableEdit?COLORS.green:COLORS.gray} />
+      </TouchableOpacity>
       <TouchableOpacity style={[styles.actionIcon, {backgroundColor: 'red'}]} onPress={() => deleteItem(item?.id)}>
         <Icon name="delete" size={20} color={COLORS.white} />
       </TouchableOpacity>
     </View>
     <View style={[styles.slider, {flexDirection: 'row'}]}>
-    <View style={{flex:1, justifyContent: 'center',}}> 
-    <Slider
-      value={item?.quantity}
-      onSlidingComplete={value => {updateItemQuantity(item?.id,value); }}
-      animateTransitions={true}
-      animationType = {'spring'}
-    />
-    </View>
-    <Text style={{fontSize:20, fontWeight:"bold", justifyContent: 'center', paddingHorizontal:10, paddingVertical:10}}>{Math.floor(item?.quantity*100)} %</Text>
+      <View style={{flex:1, justifyContent: 'center', opacity:item.enableEdit?1:0.2, }}> 
+        <Slider
+          value={range}
+          onSlidingComplete={value => {updateItemQuantity(item?.id,value); }}
+          onValueChange={setRange}
+          animateTransitions={true}
+          animationType = {'spring'}
+          disabled = {item?.enableEdit?false:true}
+          style = {{backgroundColor: COLORS.blue}}
+        />
+      </View>
+      <Text style={{fontSize:20, fontWeight:"bold", justifyContent: 'center', paddingHorizontal:10, paddingVertical:10}}>{Math.floor(range*100)} %</Text>
     </View>
     </View>;
   };
@@ -80,12 +87,23 @@ const App = () => {
       const newItem ={
         id:Math.random(),
         task: textInput,
+        enableEdit:true,
         quantity:0,
       };
       setItems([...items, newItem]);
       setTextInput('')
     }
   };
+
+  const enableEditItem = itemId => {
+    const newItems = items.map((item) => {
+      if(item.id == itemId){
+        return {...item, enableEdit:!item.enableEdit};
+      }
+      return item;
+    });
+    setItems(newItems);
+  }
 
   const deleteItem = itemId => {
     const newItems = items.filter(item => item.id != itemId);
