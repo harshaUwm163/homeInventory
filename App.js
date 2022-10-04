@@ -46,11 +46,14 @@ const App = () => {
           onValueChange={setRange}
           animateTransitions={true}
           animationType = {'spring'}
+          minimumValue = {0}
+          maximumValue= {100}
           disabled = {item?.enableEdit?false:true}
           style = {{backgroundColor: COLORS.blue}}
+          step = {1}
         />
       </View>
-      <Text style={{fontSize:20, fontWeight:"bold", justifyContent: 'center', paddingHorizontal:10, paddingVertical:10}}>{Math.floor(range*100)} %</Text>
+      <Text style={{fontSize:20, fontWeight:"bold", justifyContent: 'center', paddingHorizontal:10, paddingVertical:10}}>{range} %</Text>
     </View>
     </View>;
   };
